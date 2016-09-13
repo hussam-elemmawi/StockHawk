@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 /**
  * Created by sam_chordas on 10/8/15.
+ * Edited by hussam_elemmawi on 13/9/16
  */
 public class Utils {
 
@@ -95,10 +96,50 @@ public class Utils {
       builder.withValue(QuoteColumns.PERCENT_CHANGE, truncateChange(
           jsonObject.getString("ChangeinPercent"), true));
       builder.withValue(QuoteColumns.CHANGE, truncateChange(change, false));
+      builder.withValue(QuoteColumns.CURRENCY, jsonObject.getString("Currency"));
+
+      builder.withValue(QuoteColumns.EPSE_CURRENT_YEAR, jsonObject.getString("EPSEstimateCurrentYear"));
+      builder.withValue(QuoteColumns.EPSE_CURRENT_YEAR_PRICE ,
+              jsonObject.getString("PriceEPSEstimateCurrentYear"));
+      builder.withValue(QuoteColumns.EPSE_NEXT_YEAR ,jsonObject.getString("EPSEstimateNextYear"));
+      builder.withValue(QuoteColumns.EPSE_NEXT_YEAR_PRICE ,
+              jsonObject.getString("PriceEPSEstimateNextYear"));
+      builder.withValue(QuoteColumns.EPSE_NEXT_QUARTER ,
+              jsonObject.getString("EPSEstimateNextQuarter"));
+
+      builder.withValue(QuoteColumns.DAYS_LOW ,jsonObject.getString("DaysLow"));
+      builder.withValue(QuoteColumns.DAYS_HIGH ,jsonObject.getString("DaysHigh"));
+      builder.withValue(QuoteColumns.YEARS_LOW ,jsonObject.getString("YearLow"));
+      builder.withValue(QuoteColumns.YEARS_HIGH ,jsonObject.getString("YearHigh"));
+
+      builder.withValue(QuoteColumns.CHANGE_FROM_YEAR_LOW ,
+              jsonObject.getString("ChangeFromYearLow"));
+      builder.withValue(QuoteColumns.PERCENT_CHANGE_FROM_YEAR_LOW ,
+              jsonObject.getString("PercentChangeFromYearLow"));
+      builder.withValue(QuoteColumns.CHANGE_FROM_YEAR_HIGH ,
+              jsonObject.getString("ChangeFromYearHigh"));
+      builder.withValue(QuoteColumns.PERCENT_CHANGE_FROM_YEAR_HIGH ,
+              jsonObject.getString("PercebtChangeFromYearHigh"));
+
+      builder.withValue(QuoteColumns.FIFTY_DAY_MOVING_AVG ,
+              jsonObject.getString("FiftydayMovingAverage"));
+      builder.withValue(QuoteColumns.TWO_HUNDRED_DAY_MOVING_AVG ,
+              jsonObject.getString("TwoHundreddayMovingAverage"));
+      builder.withValue(QuoteColumns.CHANGE_FROM_50_DAY_MOVING_AVG ,
+              jsonObject.getString("ChangeFromFiftydayMovingAverage"));
+      builder.withValue(QuoteColumns.CHANGE_FROM_200_DAY_MOVING_AVG ,
+              jsonObject.getString("ChangeFromTwoHundreddayMovingAverage"));
+      builder.withValue(QuoteColumns.PERCENT_CHANGE_FROM_50_DAY_MOVING_AVG ,
+              jsonObject.getString("PercentChangeFromFiftydayMovingAverage"));
+      builder.withValue(QuoteColumns.PERCENT_CHANGE_FROM_200_DAY_MOVING_AVG ,
+              jsonObject.getString("PercentChangeFromTwoHundreddayMovingAverage"));
+
       builder.withValue(QuoteColumns.ISCURRENT, 1);
       if (change.charAt(0) == '-'){
         builder.withValue(QuoteColumns.ISUP, 0);
-      }else{
+      }else if (change.charAt(0) == 'n'){
+        builder.withValue(QuoteColumns.ISUP, -1);
+      }else {
         builder.withValue(QuoteColumns.ISUP, 1);
       }
 

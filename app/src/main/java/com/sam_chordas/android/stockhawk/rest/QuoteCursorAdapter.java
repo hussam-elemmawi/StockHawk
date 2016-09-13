@@ -1,5 +1,6 @@
 package com.sam_chordas.android.stockhawk.rest;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import com.sam_chordas.android.stockhawk.touch_helper.ItemTouchHelperViewHolder;
  *  Credit to skyfishjy gist:
  *    https://gist.github.com/skyfishjy/443b7448f59be978bc59
  * for the code structure
+ * Edited by hussam_elemmawi on 13/9/16
  */
 public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAdapter.ViewHolder>
     implements ItemTouchHelperAdapter{
@@ -43,6 +45,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     return vh;
   }
 
+  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   @Override
   public void onBindViewHolder(final ViewHolder viewHolder, final Cursor cursor){
     viewHolder.symbol.setText(cursor.getString(cursor.getColumnIndex("symbol")));
@@ -56,13 +59,21 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
         viewHolder.change.setBackground(
             mContext.getResources().getDrawable(R.drawable.percent_change_pill_green));
       }
-    } else{
+    } else if (cursor.getInt(cursor.getColumnIndex("is_up")) == 0){
       if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
         viewHolder.change.setBackgroundDrawable(
             mContext.getResources().getDrawable(R.drawable.percent_change_pill_red));
       } else{
         viewHolder.change.setBackground(
             mContext.getResources().getDrawable(R.drawable.percent_change_pill_red));
+      }
+    }else {
+      if (sdk < Build.VERSION_CODES.JELLY_BEAN){
+        viewHolder.change.setBackgroundDrawable(
+                mContext.getResources().getDrawable(R.drawable.percent_change_pill_orange));
+      }else {
+        viewHolder.change.setBackground(
+                mContext.getResources().getDrawable(R.drawable.percent_change_pill_orange));
       }
     }
     if (Utils.showPercent){
