@@ -96,7 +96,7 @@ public class Utils {
       builder.withValue(QuoteColumns.PERCENT_CHANGE, truncateChange(
           jsonObject.getString("ChangeinPercent"), true));
       builder.withValue(QuoteColumns.CHANGE, truncateChange(change, false));
-      builder.withValue(QuoteColumns.CURRENCY, jsonObject.getString("Currency"));
+    /*  builder.withValue(QuoteColumns.CURRENCY, jsonObject.getString("Currency"));
 
       builder.withValue(QuoteColumns.EPSE_CURRENT_YEAR, jsonObject.getString("EPSEstimateCurrentYear"));
       builder.withValue(QuoteColumns.EPSE_CURRENT_YEAR_PRICE ,
@@ -133,13 +133,14 @@ public class Utils {
               jsonObject.getString("PercentChangeFromFiftydayMovingAverage"));
       builder.withValue(QuoteColumns.PERCENT_CHANGE_FROM_200_DAY_MOVING_AVG ,
               jsonObject.getString("PercentChangeFromTwoHundreddayMovingAverage"));
-
+*/
       builder.withValue(QuoteColumns.ISCURRENT, 1);
+
       if (change.charAt(0) == '-'){
         builder.withValue(QuoteColumns.ISUP, 0);
-      }else if (change.charAt(0) == 'n'){
+      }/*else if (change.charAt(0) == 'n'){
         builder.withValue(QuoteColumns.ISUP, -1);
-      }else {
+      }*/else {
         builder.withValue(QuoteColumns.ISUP, 1);
       }
 
