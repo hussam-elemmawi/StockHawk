@@ -84,7 +84,7 @@ public class Utils {
         } catch (NumberFormatException ne) {
             ne.printStackTrace();
         }
-        return "";
+        return "null";
     }
 
     public static ContentProviderOperation buildBatchOperation(JSONObject jsonObject) {
