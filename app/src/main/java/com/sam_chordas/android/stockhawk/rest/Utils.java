@@ -2,14 +2,14 @@ package com.sam_chordas.android.stockhawk.rest;
 
 import android.content.ContentProviderOperation;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.data.StockValuesColumns;
 
-import net.simonvt.schematic.annotation.NotNull;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +25,13 @@ public class Utils {
 
     public static boolean showPercent = true;
 
+    public static String getDate(int afterYears){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        calendar.add(Calendar.YEAR, afterYears);
+        return df.format(calendar.getTime());
+    }
+
     public static ArrayList quoteJsonToContentVals(String JSON) {
         ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>();
         JSONObject jsonObject = null;
@@ -37,20 +44,42 @@ public class Utils {
                 if (count == 1) {
                     jsonObject = jsonObject.getJSONObject("results")
                             .getJSONObject("quote");
-                    batchOperations.add(buildBatchOperation(jsonObject));
+                    batchOperations.add(buildBatchOperationForQuotes(jsonObject));
                 } else {
                     resultsArray = jsonObject.getJSONObject("results").getJSONArray("quote");
 
                     if (resultsArray != null && resultsArray.length() != 0) {
                         for (int i = 0; i < resultsArray.length(); i++) {
                             jsonObject = resultsArray.getJSONObject(i);
-                            batchOperations.add(buildBatchOperation(jsonObject));
+                            batchOperations.add(buildBatchOperationForQuotes(jsonObject));
                         }
                     }
                 }
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "String to JSON failed: " + e);
+        }
+        return batchOperations;
+    }
+
+    public static ArrayList stockValuesJsonToContentVals(String JSON){
+        ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>();
+        JSONObject jsonObject = null;
+        JSONArray resultArray = null;
+        try{
+            jsonObject = new JSONObject(JSON);
+            if(jsonObject != null && jsonObject.length() != 0){
+                jsonObject = jsonObject.getJSONObject("query");
+                jsonObject = jsonObject.getJSONObject("results");
+                resultArray = jsonObject.getJSONArray("quote");
+                int resultLenght = resultArray.length();
+                for(int i=0; i<resultLenght; i++){
+                    jsonObject = resultArray.getJSONObject(i);
+                    batchOperations.add(buildBatchOperationsForStockVals(jsonObject));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return batchOperations;
     }
@@ -87,7 +116,7 @@ public class Utils {
         return "null";
     }
 
-    public static ContentProviderOperation buildBatchOperation(JSONObject jsonObject) {
+    public static ContentProviderOperation buildBatchOperationForQuotes(JSONObject jsonObject) {
         ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(
                 QuoteProvider.Quotes.CONTENT_URI);
         try {
@@ -144,6 +173,24 @@ public class Utils {
                 builder.withValue(QuoteColumns.ISUP, 1);
             }
 
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return builder.build();
+    }
+
+    public static ContentProviderOperation buildBatchOperationsForStockVals(JSONObject jsonObject){
+        ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(
+                QuoteProvider.StockValues.CONTENT_URI);
+        try{
+            builder.withValue(StockValuesColumns.SYMBOL, jsonObject.getString("Symbol"));
+            builder.withValue(StockValuesColumns.DATE, jsonObject.getString("Date"));
+            builder.withValue(StockValuesColumns.OPEN, jsonObject.getString("Open"));
+            builder.withValue(StockValuesColumns.HIGH, jsonObject.getString("High"));
+            builder.withValue(StockValuesColumns.LOW, jsonObject.getString("Low"));
+            builder.withValue(StockValuesColumns.CLOSE, jsonObject.getString("Close"));
+            builder.withValue(StockValuesColumns.VOLUME, jsonObject.getString("Volume"));
+            builder.withValue(StockValuesColumns.ADG_CLOSE, jsonObject.getString("Adj_Close"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
