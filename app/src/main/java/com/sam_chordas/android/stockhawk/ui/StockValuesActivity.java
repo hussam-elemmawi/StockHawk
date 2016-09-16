@@ -1,6 +1,7 @@
 package com.sam_chordas.android.stockhawk.ui;
 
 import android.content.OperationApplicationException;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -10,6 +11,7 @@ import android.util.Log;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.data.StockValuesColumns;
 import com.sam_chordas.android.stockhawk.rest.Utils;
 
 import java.io.IOException;
@@ -41,7 +43,44 @@ public class StockValuesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mSymbol = getIntent().getStringExtra("symbol");
-        new FetchStockValuesTask().execute();
+        if (!freshDataStoredInDatabase()){
+
+            new FetchStockValuesTask().execute();
+        }
+    }
+
+    boolean freshDataStoredInDatabase(){
+        Cursor cursor = this.getContentResolver().query(QuoteProvider.StockValues.CONTENT_URI,
+                null,
+                StockValuesColumns.SYMBOL + " = ?",
+                new String[]{mSymbol},
+                null);
+        if (cursor != null && cursor.getCount() > 0){
+            cursor.moveToNext();
+            String lastStoredDate = cursor.getString(cursor.getColumnIndex(StockValuesColumns.DATE));
+            Log.d(LOG_TAG, lastStoredDate + " fasel " +  Utils.getDate(NOW));
+            String[] parts = lastStoredDate.split("-");
+            int storedYear = Integer.parseInt(parts[0]);
+            int storedMonth = Integer.parseInt(parts[1]);
+            int storedDay = Integer.parseInt(parts[2]);
+
+            String rightNow = Utils.getDate(NOW);
+            parts = rightNow.split("-");
+            int currentYear = Integer.parseInt(parts[0]);
+            int currentMonth = Integer.parseInt(parts[1]);
+            int currentDay = Integer.parseInt(parts[2]) -1;
+
+            if (storedDay == currentDay){
+                if (storedMonth == currentMonth){
+                    if (storedYear == currentYear)
+                        return true;
+                }
+            }else {
+                return false;
+            }
+
+        }
+            return false;
     }
 
     private class FetchStockValuesTask extends AsyncTask<Void, Void, Void>{
@@ -59,6 +98,8 @@ public class StockValuesActivity extends AppCompatActivity {
         protected Void doInBackground(Void...params) {
 
             StringBuilder urlStringBuilder = new StringBuilder();
+
+            Log.d(LOG_TAG, "ana ha fetch ahoo ...");
 
             try{
                 urlStringBuilder.append("https://query.yahooapis.com/v1/public/yql?q=");

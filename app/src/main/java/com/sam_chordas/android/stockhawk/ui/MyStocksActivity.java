@@ -94,7 +94,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                         Cursor cursor = mCursorAdapter.getCursor();
                         cursor.moveToPosition(position);
                         int isUp = cursor.getInt(cursor.getColumnIndex(QuoteColumns.ISUP));
-                        if (isUp != -1){
+                        String bidPrice = cursor.getString(cursor.getColumnIndex(QuoteColumns.BIDPRICE));
+                        if (isUp != -1 && !bidPrice.equals("empty")){
                             String symbol = cursor.getString(1);
                             intent.putExtra("symbol", symbol);
                             startActivity(intent);
