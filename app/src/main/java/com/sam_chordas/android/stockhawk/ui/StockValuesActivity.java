@@ -76,6 +76,7 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
 
     void initializeChart(){
         mLineChart = (ValueLineChart) findViewById(R.id.line_chart);
+        mLineChart.setMaxZoomX(100);
 
         series = new ValueLineSeries();
         series.setColor(R.color.material_green_A700);

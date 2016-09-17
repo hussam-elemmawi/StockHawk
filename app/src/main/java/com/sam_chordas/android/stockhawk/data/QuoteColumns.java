@@ -20,7 +20,6 @@ public class QuoteColumns {
   public static final String PERCENT_CHANGE = "percent_change";
   @DataType(DataType.Type.TEXT) @NotNull
   public static final String CHANGE = "change";
-/*
   @DataType(DataType.Type.TEXT) @NotNull
   public static final String CURRENCY = "currency";
 
@@ -67,7 +66,6 @@ public class QuoteColumns {
   @DataType(DataType.Type.TEXT) @NotNull
   public static final String PERCENT_CHANGE_FROM_200_DAY_MOVING_AVG =
           "percent_change_from_200_day_moving_avg";
-*/
 
   @DataType(DataType.Type.TEXT) @NotNull
   public static final String BIDPRICE = "bid_price";

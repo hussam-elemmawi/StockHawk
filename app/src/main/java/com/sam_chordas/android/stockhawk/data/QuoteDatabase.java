@@ -12,7 +12,7 @@ public class QuoteDatabase {
     private QuoteDatabase() {
     }
 
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     @Table(QuoteColumns.class)
     public static final String QUOTES = "quotes";

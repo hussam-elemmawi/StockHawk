@@ -27,8 +27,6 @@ public class Utils {
 
     public static boolean showPercent = true;
 
-    static final int NOW = 0;
-
     final static String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
                                         "Oct", "Nov", "Dec"};
 
@@ -142,7 +140,7 @@ public class Utils {
             builder.withValue(QuoteColumns.PERCENT_CHANGE, truncateChange(
                     jsonObject.getString("ChangeinPercent"), true));
             builder.withValue(QuoteColumns.CHANGE, truncateChange(change, false));
-   /*         builder.withValue(QuoteColumns.CURRENCY, jsonObject.getString("Currency"));
+            builder.withValue(QuoteColumns.CURRENCY, jsonObject.getString("Currency"));
 
             builder.withValue(QuoteColumns.EPSE_CURRENT_YEAR, jsonObject.getString("EPSEstimateCurrentYear"));
             builder.withValue(QuoteColumns.EPSE_CURRENT_YEAR_PRICE,
@@ -179,7 +177,6 @@ public class Utils {
                     jsonObject.getString("PercentChangeFromFiftydayMovingAverage"));
             builder.withValue(QuoteColumns.PERCENT_CHANGE_FROM_200_DAY_MOVING_AVG,
                     jsonObject.getString("PercentChangeFromTwoHundreddayMovingAverage"));
-*/
             builder.withValue(QuoteColumns.ISCURRENT, 1);
             if (change.charAt(0) == '-') {
                 builder.withValue(QuoteColumns.ISUP, 0);
