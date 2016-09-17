@@ -11,6 +11,7 @@ import com.sam_chordas.android.stockhawk.data.StockValuesColumns;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Stack;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,32 +29,16 @@ public class Utils {
 
     static final int NOW = 0;
 
-    public static float getEntryValueFromDate(String date){
-        float ret = 0;
+    final static String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+                                        "Oct", "Nov", "Dec"};
+
+    public static String formateDateForLegend(String date){
+        StringBuilder ret = new StringBuilder();
         String[] parts = date.split("-");
-        float year = Float.parseFloat(parts[0]);
-        float month = Float.parseFloat(parts[1]);
-        float day = Float.parseFloat(parts[2]);
-
-        String rightNow = getDate(NOW);
-        parts = rightNow.split("-");
-        float currentYear = Float.parseFloat(parts[0]);
-
-        /*
-        * here is the logic: if we are on the current running year have 10,000 credit
-        * if not, 00000 credit
-        * then add month * 100, ex: november would be 1100, march would be 300
-        * then add the day as it is.
-        * so here we can sort date values, and to be easy to plot on the graph
-        * for more clearance: on this day I'm writting the code which is 16/09/2016
-        * it would be currently = 10000 (for current year) + 900 (september) + 16 (for today) = 10916
-        * */
-
-        ret+= (year * 10000);
-        ret += (month * 100);
-        ret += day;
-
-        return ret/(float)(Math.pow(10, 7));
+        ret.append(parts[2] + " ");
+        ret.append(MONTHS[Integer.parseInt(parts[1]) -1] + " ");
+        ret.append(parts[0].substring(2,4));
+        return ret.toString();
     }
 
     public static String getDate(int afterYears){

@@ -2,7 +2,6 @@ package com.sam_chordas.android.stockhawk.ui;
 
 import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -11,15 +10,9 @@ import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.FloatProperty;
 import android.util.Log;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.data.StockValuesColumns;
@@ -34,7 +27,11 @@ import java.util.List;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import com.github.mikephil.charting.data.Entry;
+
+import org.eazegraph.lib.charts.ValueLineChart;
+import org.eazegraph.lib.models.LegendModel;
+import org.eazegraph.lib.models.ValueLinePoint;
+import org.eazegraph.lib.models.ValueLineSeries;
 
 /**
  * Created by hussamelemmawi on 14/09/16.
@@ -54,24 +51,9 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
 
     static final int LOADER_ID = 1;
 
-    LineChart lineChart;
-    LineData lineChartData;
+    ValueLineChart mLineChart;
+    ValueLineSeries series;
 
-    String date;
-    String open;
-    String high;
-    String low;
-    String close;
-
-    List<Entry> openEntries;
-    List<Entry> highEntries;
-    List<Entry> lowEntries;
-    List<Entry> closeEntries;
-
-    LineDataSet openSet;
-    LineDataSet highSet;
-    LineDataSet lowSet;
-    LineDataSet closeSet;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,45 +65,20 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
             new FetchStockValuesTask().execute();
         }
         initializeChart();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onRestart() {
         getLoaderManager().restartLoader(LOADER_ID, null, this);
+        super.onRestart();
     }
 
     void initializeChart(){
-        lineChart = (LineChart) findViewById(R.id.chart);
-        lineChart.getLegend().setEnabled(true);
+        mLineChart = (ValueLineChart) findViewById(R.id.line_chart);
 
-        XAxis xAxis = lineChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTextSize(10f);
-        xAxis.setTextColor(Color.RED);
-        xAxis.setDrawAxisLine(true);
-        xAxis.setDrawGridLines(false);
-//        xAxis.setAxisMaxValue(12);
-//        xAxis.setAxisMinValue(1);
-        xAxis.setDrawLabels(true);
-        xAxis.setLabelCount(4);
-
-
-        lineChart.getAxisRight().setEnabled(false);
-        lineChart.getAxisLeft().setDrawGridLines(false);
-        lineChart.getAxisLeft().setDrawZeroLine(true);
-
-
-        openEntries = new ArrayList<>();
-        highEntries = new ArrayList<>();
-        lowEntries = new ArrayList<>();
-        closeEntries = new ArrayList<>();
+        series = new ValueLineSeries();
+        series.setColor(R.color.material_green_A700);
     }
 
     boolean freshDataStoredInDatabase(){
@@ -213,7 +170,7 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
                 null,
                 StockValuesColumns.SYMBOL + " = ?",
                 new String[]{mSymbol},
-                null);
+                StockValuesColumns.DATE + " ASC");
     }
 
     @Override
@@ -221,54 +178,15 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
         if (data != null){
             data.moveToFirst();
             if (data.getCount() > 0){
-                openEntries.clear();
-                highEntries.clear();
-                lowEntries.clear();
-                closeEntries.clear();
-
+                String date;
                 do {
                     date = data.getString(data.getColumnIndex(StockValuesColumns.DATE));
-                    open =  data.getString(data.getColumnIndex(StockValuesColumns.OPEN));
-                    high = data.getString(data.getColumnIndex(StockValuesColumns.HIGH));
-                    low = data.getString(data.getColumnIndex(StockValuesColumns.LOW));
-                    close = data.getString(data.getColumnIndex(StockValuesColumns.CLOSE));
-
-                    openEntries.add(new Entry(Utils.getEntryValueFromDate(date), Float.parseFloat(open)));
-                    highEntries.add(new Entry(Utils.getEntryValueFromDate(date), Float.parseFloat(high)));
-                    lowEntries.add(new Entry(Utils.getEntryValueFromDate(date), Float.parseFloat(low)));
-                    closeEntries.add(new Entry(Utils.getEntryValueFromDate(date), Float.parseFloat(close)));
-
-                    Log.d("debug",
-                            Float.toString(Utils.getEntryValueFromDate(date)) + " : " + Float.parseFloat(open));
-
+                    series.addPoint(new ValueLinePoint(Utils.formateDateForLegend(date),
+                            Float.parseFloat(data.getString(data.getColumnIndex(StockValuesColumns.HIGH)))));
 
                 }while (data.moveToNext());
-
-                openSet = new LineDataSet(openEntries, "Open"); // add entries to dataset
-                openSet.setColor(R.color.material_blue_A700);
-                openSet.setValueTextColor(R.color.material_blue_A700);
-                openSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-
-                highSet = new LineDataSet(highEntries, "High"); // add entries to dataset
-                highSet.setColor(R.color.material_green_A700);
-                highSet.setValueTextColor(R.color.material_green_A700);
-                highSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-
-                lowSet = new LineDataSet(lowEntries, "Low"); // add entries to dataset
-                lowSet.setColor(R.color.material_red_A700);
-                lowSet.setValueTextColor(R.color.material_red_A700);
-                lowSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-
-                closeSet = new LineDataSet(closeEntries, "Close"); // add entries to dataset
-                closeSet.setColor(R.color.material_purple_A700);
-                closeSet.setValueTextColor(R.color.material_purple_A700);
-                closeSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-
-                lineChartData = new LineData(openSet, highSet, lowSet, closeSet);
-
-                lineChart.setData(lineChartData);
-
-                lineChart.invalidate();
+                mLineChart.addSeries(series);
+                mLineChart.startAnimation();
             }
         }
     }
