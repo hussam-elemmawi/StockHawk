@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -95,6 +96,11 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
         setContentView(R.layout.activity_stock_values);
 
         mSymbol = getIntent().getStringExtra("symbol");
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setTitle(mSymbol+"'Stock Values");
+        }
+
         if (!freshDataStoredInDatabase()) {
             deleteOldData();
             new FetchStockValuesTask().execute();
