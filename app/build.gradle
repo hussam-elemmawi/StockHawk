@@ -34,9 +34,13 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'net.simonvt.schematic:schematic:0.6.3'
     compile 'com.melnykov:floatingactionbutton:1.2.0'
-    compile 'com.android.support:design:24.0.0'
+    compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:gridlayout-v7:24.2.1'
     compile 'com.facebook.stetho:stetho:1.4.1'
     compile 'com.facebook.stetho:stetho-okhttp3:1.4.1'
     compile 'com.github.blackfizz:eazegraph:1.2.2@aar'
     compile 'com.nineoldandroids:library:2.4.0'
+
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }

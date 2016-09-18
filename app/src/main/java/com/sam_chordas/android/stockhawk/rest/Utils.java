@@ -29,6 +29,7 @@ public class Utils {
 
     final static String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
                                         "Oct", "Nov", "Dec"};
+    public static final int NOW = 0;
 
     public static String formateDateForLegend(String date){
         StringBuilder ret = new StringBuilder();
@@ -198,6 +199,7 @@ public class Utils {
         try{
             builder.withValue(StockValuesColumns.SYMBOL, jsonObject.getString("Symbol"));
             builder.withValue(StockValuesColumns.DATE, jsonObject.getString("Date"));
+            builder.withValue(StockValuesColumns.CREATED, Utils.getDate(NOW));
             builder.withValue(StockValuesColumns.OPEN, jsonObject.getString("Open"));
             builder.withValue(StockValuesColumns.HIGH, jsonObject.getString("High"));
             builder.withValue(StockValuesColumns.LOW, jsonObject.getString("Low"));

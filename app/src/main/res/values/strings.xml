@@ -1,13 +1,42 @@
 <resources>
-  <string name="app_name">Stock Hawk</string>
+    <string name="app_name">Stock Hawk</string>
 
-  <string name="action_example">Example action</string>
+    <string name="action_example">Example action</string>
 
-  <string name="action_settings">Settings</string>
-  <string name="action_change_units">Change Units</string>
-  <string name="symbol_search">Symbol Search</string>
-  <string name="content_test">Search for a Stock Symbol</string>
-  <string name="input_hint">FB</string>
-  <string name="input_prefill"></string>
-  <string name="network_toast">Uh-oh! This app requires an internet connection</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_change_units">Change Units</string>
+    <string name="symbol_search">Symbol Search</string>
+    <string name="content_test">Search for a Stock Symbol</string>
+    <string name="input_hint">FB</string>
+    <string name="input_prefill"></string>
+    <string name="network_toast">Uh-oh! This app requires an internet connection</string>
+
+
+    <!-- extra details strings-->
+
+    <string name="stock_info" translatable="true">Stock Info</string>
+    <string name="currency" translatable="true">Currency:</string>
+
+    <string name="years_high_low" translatable="true">Years H/L:</string>
+    <string name="days_high_low" translatable="true">Days H/L:</string>
+
+    <string name="epse_label" translatable="true">EPSEstimate</string>
+    <string name="epse_current_year" translatable="true">Current Year:</string>
+    <string name="epse_current_year_price" translatable="true">Current Year Price:</string>
+    <string name="epse_next_quarter" translatable="true">Next Quarter:</string>
+    <string name="epse_next_year" translatable="true">Next Year:</string>
+    <string name="epse_next_year_price" translatable="true">Next Year Price:</string>
+
+    <string name="changes_label" translatable="true">Changes</string>
+    <string name="change_from_year_high_low" translatable="true">From Year H/L:</string>
+    <string name="percent_change_from_year_high_low" translatable="true">Percent H/L:</string>
+
+    <string name="moving_avg" translatable="true">Moving Average</string>
+    <string name="fifty_day_moving_avg" translatable="true">50 Days:</string>
+    <string name="change_from_50_day_moving_avg" translatable="true">Change on 50 Days:</string>
+    <string name="percent_change_from_50_day_moving_avg" translatable="true">Percent:</string>
+    <string name="two_hundred_day_moving_avg" translatable="true">200 Days:</string>
+    <string name="change_from_200_day_moving_avg" translatable="true">Change 200 Days:</string>
+    <string name="percent_change_from_200_day_moving_avg" translatable="true">Percent:</string>
+
 </resources>

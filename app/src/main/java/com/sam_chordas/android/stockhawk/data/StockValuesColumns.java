@@ -17,6 +17,9 @@ public class StockValuesColumns {
     @DataType(DataType.Type.TEXT) @NotNull
     public static final String DATE = "date";
 
+    @DataType(DataType.Type.TEXT)
+    public static final String CREATED = "created";
+
     @DataType(DataType.Type.TEXT) @NotNull
     public static final String OPEN = "open";
     @DataType(DataType.Type.TEXT) @NotNull
