@@ -2,10 +2,9 @@
 <resources>
 
     <color name="primaryColor">#4CAF50</color>
-    <color name="primaryDarkColor">#2E7D32</color>
+    <color name="primaryDarkColor">#388E3C</color>
     <color name="accentColor">#00E5FF</color>
     <color name="accentDarkColor">#00B8D4</color>
-
 
     <color name="material_blue_700">#1976D2</color>
     <color name="material_blue_500">#2196F3</color>
@@ -14,7 +13,6 @@
     <color name="material_red_A700">#D50000</color>
     <color name="material_green_A700">#00C853</color>
     <color name="material_orange_A700">#FF6D00</color>
-    <color name="material_purple_A700">#AA00FF</color>
 
     <!-- our detail accent colors -->
     <color name="detail_accent_pane_background">#455A64</color>

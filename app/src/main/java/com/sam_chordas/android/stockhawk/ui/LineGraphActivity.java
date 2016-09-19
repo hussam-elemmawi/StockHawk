@@ -1,19 +1,35 @@
 package com.sam_chordas.android.stockhawk.ui;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Fade;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
+import com.db.chart.Tools;
+import com.db.chart.model.ChartSet;
+import com.db.chart.model.LineSet;
+import com.db.chart.view.AxisController;
+import com.db.chart.view.LineChartView;
+import com.db.chart.view.animation.Animation;
+import com.db.chart.view.animation.easing.BaseEasingMethod;
+import com.db.chart.view.animation.style.BaseStyleAnimation;
+import com.db.chart.view.animation.style.DashAnimation;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
@@ -31,15 +47,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import org.eazegraph.lib.charts.ValueLineChart;
-import org.eazegraph.lib.models.ValueLinePoint;
-import org.eazegraph.lib.models.ValueLineSeries;
 
 /**
  * Created by hussamelemmawi on 14/09/16.
  */
-public class StockValuesActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String LOG_TAG = StockValuesActivity.class.getSimpleName();
+public class LineGraphActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String LOG_TAG = LineGraphActivity.class.getSimpleName();
 
     private String mSymbol;
 
@@ -48,14 +61,10 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
             .addNetworkInterceptor(new StethoInterceptor())
             .build();
 
-    static final int NOW = 0;
+    static final int CURRENT_YEAR = 0;
     static final int YEAR_LATER = -1;
 
     static final int LOADER_ID = 1;
-
-    @BindView(R.id.line_chart)
-    ValueLineChart mLineChart;
-    ValueLineSeries series;
 
     @BindView(R.id.currency_textview)
     TextView currencyTextView;
@@ -90,15 +99,29 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
     @BindView(R.id.percent_change_from_200_day_moving_avg_textview)
     TextView percentChange200DayMovingAvgTextView;
 
+
+    @BindView(R.id.line_chart)
+    LineChartView mLineChart;
+    Animation anim;
+
+    LineSet highSet, lowSet;
+    float[] highs, lows;
+    String[] xLabels;
+    String[] mCurrentMonths = new String[13];
+
+    int axisColor, highDataColor, lowDataColor;
+
+    float maxValue;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stock_values);
+        setContentView(R.layout.activity_line_graph);
 
         mSymbol = getIntent().getStringExtra("symbol");
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null){
-            actionBar.setTitle(mSymbol+"'Stock Values");
+        if (actionBar != null) {
+            actionBar.setTitle(mSymbol + "'Stock Values");
         }
 
         if (!freshDataStoredInDatabase()) {
@@ -118,10 +141,28 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
 
     void initializeChart() {
         // TODO : fix and customize graph
-        mLineChart.setMaxZoomX(100);
 
-        series = new ValueLineSeries();
-        series.setColor(R.color.material_green_A700);
+        if (Build.VERSION.SDK_INT > 23){
+            axisColor = ContextCompat.getColor(this, R.color.material_blue_700);
+            highDataColor = ContextCompat.getColor(this, R.color.material_green_A700);
+            lowDataColor = ContextCompat.getColor(this, R.color.material_red_A700);
+        }else {
+            axisColor = getResources().getColor(R.color.material_blue_700);
+            highDataColor = getResources().getColor(R.color.material_green_A700);
+            lowDataColor = getResources().getColor(R.color.material_red_A700);
+        }
+
+        mLineChart.setBorderSpacing(2)
+                .setBorderSpacing(Tools.fromDpToPx(5))
+                .setTopSpacing(4)
+                .setAxisThickness(3)
+                .setAxisColor(axisColor)
+                .setLabelsColor(axisColor)
+                .setAxisLabelsSpacing(10);
+
+        anim = new Animation();
+        anim.setAlpha(150)
+            .setDuration(1000);
     }
 
     boolean freshDataStoredInDatabase() {
@@ -133,13 +174,13 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
         if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             String lastStoredDate = cursor.getString(cursor.getColumnIndex(StockValuesColumns.CREATED));
-            Log.d(LOG_TAG, lastStoredDate + " fasel " + Utils.getDate(NOW));
+            Log.d(LOG_TAG, lastStoredDate + " fasel " + Utils.getDate(CURRENT_YEAR));
             String[] parts = lastStoredDate.split("-");
             int storedYear = Integer.parseInt(parts[0]);
             int storedMonth = Integer.parseInt(parts[1]);
             int storedDay = Integer.parseInt(parts[2]);
 
-            String rightNow = Utils.getDate(NOW);
+            String rightNow = Utils.getDate(CURRENT_YEAR);
             parts = rightNow.split("-");
             int currentYear = Integer.parseInt(parts[0]);
             int currentMonth = Integer.parseInt(parts[1]);
@@ -188,7 +229,7 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
                 urlStringBuilder.append(URLEncoder.encode(" select * from yahoo.finance.historicaldata" +
                                 " where symbol = \"" + mSymbol + "\""
                                 + " and startDate = \"" + Utils.getDate(YEAR_LATER) + "\""
-                                + " and endDate = \"" + Utils.getDate(NOW) + "\"",
+                                + " and endDate = \"" + Utils.getDate(CURRENT_YEAR) + "\"",
                         "UTF-8"));
 
                 urlStringBuilder.append("&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables."
@@ -196,7 +237,7 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
 
                 String getResponse = fetchData(urlStringBuilder.toString());
 
-                StockValuesActivity.this.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
+                LineGraphActivity.this.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
                         Utils.stockValuesJsonToContentVals(getResponse));
 
                 Log.d(LOG_TAG, mSymbol + mSymbol + mSymbol);
@@ -222,20 +263,76 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
                 StockValuesColumns.DATE + " ASC");
     }
 
+    public static final int COL_DATE = 2;
+    public static final int COL_HIGH = 4;
+    public static final int COL_LOW = 5;
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null) {
             data.moveToFirst();
             if (data.getCount() > 0) {
                 String date;
+                int i = 0;
+                int ii = 0;
+                int size = data.getCount() + 1;
+                highs = new float[size];
+                lows = new float[size];
+                xLabels = new String[size];
+                maxValue = Float.parseFloat(data.getString(COL_HIGH));
+
+                for (int k = 0; k < size; k++)
+                    xLabels[k] = "";
+
                 do {
-                    date = data.getString(data.getColumnIndex(StockValuesColumns.DATE));
-                    series.addPoint(new ValueLinePoint(Utils.formateDateForLegend(date),
-                            Float.parseFloat(data.getString(data.getColumnIndex(StockValuesColumns.HIGH)))));
+                    date = data.getString(COL_DATE);
+                    highs[ii] =
+                            Float.parseFloat(data.getString(COL_HIGH));
+                    lows[ii] =
+                            Float.parseFloat(data.getString(COL_LOW));
+                    ii++;
+
+                    if (maxValue < highs[ii])
+                        maxValue = highs[ii];
+
+                    if (i == 0) {
+                        mCurrentMonths[i] = Utils.formateXLabels(date);
+                        i++;
+                    } else if (!mCurrentMonths[i - 1].equals(Utils.formateXLabels(date))) {
+                        mCurrentMonths[i] = Utils.formateXLabels(date);
+                        i++;
+                    }
+
 
                 } while (data.moveToNext());
-                mLineChart.addSeries(series);
-                mLineChart.startAnimation();
+
+                i = 0;
+                for (int j = 13; j < size; j += (size / 7)) {
+                    xLabels[j] = mCurrentMonths[i];
+                    i+=2;
+                    i %= 13;
+                }
+
+                highSet = new LineSet(xLabels, highs);
+                highSet.setColor(highDataColor);
+                highSet.setThickness(Tools.fromDpToPx(1));
+                highSet.endAt(size-1);
+
+                lowSet = new LineSet(xLabels, lows);
+                lowSet.setColor(lowDataColor);
+                lowSet.setThickness(Tools.fromDpToPx(1));
+                lowSet.endAt(size-1);
+
+                mLineChart.addData(highSet);
+                mLineChart.addData(lowSet);
+
+                mLineChart.setStep((int) Utils.getProperSteps(maxValue));
+                mLineChart.show(anim);
+
+                lows = null;
+                lowSet = null;
+                highs = null;
+                highSet = null;
             }
         }
 
@@ -270,12 +367,12 @@ public class StockValuesActivity extends AppCompatActivity implements LoaderMana
                 new String[]{mSymbol},
                 null);
 
-        if(extraData != null && extraData.getCount() > 0){
+        if (extraData != null && extraData.getCount() > 0) {
             extraData.moveToFirst();
             currencyTextView.setText(extraData.getString(COL_CURRENCY));
-            yearsHighLowTextView.setText(extraData.getString(COL_YEARS_HIGH )
+            yearsHighLowTextView.setText(extraData.getString(COL_YEARS_HIGH)
                     + "/" + extraData.getString(COL_YEARS_LOW));
-            daysHighLowTextView.setText(extraData.getString(COL_DAYS_HIGH )
+            daysHighLowTextView.setText(extraData.getString(COL_DAYS_HIGH)
                     + "/" + extraData.getString(COL_DAYS_LOW));
             epseCurrentYearTextView.setText(extraData.getString(COL_ESPE_CURRENT_YEAR));
             epseCurrentYearPriceTextView.setText(extraData.getString(COL_ESPE_CURRENT_YEAR_PRICE));

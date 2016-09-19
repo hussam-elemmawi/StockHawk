@@ -9,9 +9,14 @@
     <string name="input_prefill" translatable="false"></string>
     <string name="network_toast">اوباااا! التطبيق دا عاوز انترنت </string>
 
+    <!-- strings for graph-->
+    <string name="graph_high" translatable="true">عالي</string>
+    <string name="graph_low" translatable="true">منخفض</string>
+
     <!-- Strings for Toasts-->
     <string name="stock_already_saved" translatable="true">هذه البورصة مسجلة بالفعل!</string>
     <string name="stock_doesnt_exists" translatable="true">لا توجد هذه البورصة!</string>
+    <string name="under_dev" translatable="true">لا, دي لسا مخلصتش!</string>
 
 
     <!-- description for the fab button-->

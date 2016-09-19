@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -89,7 +88,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                     public void onItemClick(View v, int position) {
                         //TODO:
                         // do something on item click
-                        Intent intent = new Intent(MyStocksActivity.this, StockValuesActivity.class);
+                        Intent intent = new Intent(MyStocksActivity.this, LineGraphActivity.class);
 
                         Cursor cursor = mCursorAdapter.getCursor();
                         cursor.moveToPosition(position);
@@ -209,6 +208,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(this, getString(R.string.under_dev), Toast.LENGTH_LONG).show();
             return true;
         }
 

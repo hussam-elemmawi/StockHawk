@@ -27,17 +27,21 @@ public class Utils {
 
     public static boolean showPercent = true;
 
-    final static String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+    public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
                                         "Oct", "Nov", "Dec"};
     public static final int NOW = 0;
 
-    public static String formateDateForLegend(String date){
-        StringBuilder ret = new StringBuilder();
-        String[] parts = date.split("-");
-        ret.append(parts[2] + " ");
-        ret.append(MONTHS[Integer.parseInt(parts[1]) -1] + " ");
-        ret.append(parts[0].substring(2,4));
-        return ret.toString();
+    public static float getProperSteps(float maxValue){
+        if (maxValue > 0 && maxValue < 10){
+            return 1;
+        } else if (maxValue >= 10 && maxValue < 100){
+            return 10;
+        } else if (maxValue >= 100 && maxValue < 1000){
+            return 50;
+        }else if (maxValue >= 1000 && maxValue < 10000){
+            return 250;
+        } else
+            return -1;
     }
 
     public static String getDate(int afterYears){
@@ -45,6 +49,11 @@ public class Utils {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         calendar.add(Calendar.YEAR, afterYears);
         return df.format(calendar.getTime());
+    }
+
+    public static String formateXLabels(String date){
+        String[] parts = date.split("-");
+        return MONTHS[Integer.parseInt(parts[1]) -1] + parts[0].substring(2, 4);
     }
 
     public static ArrayList quoteJsonToContentVals(String JSON) {
@@ -200,12 +209,12 @@ public class Utils {
             builder.withValue(StockValuesColumns.SYMBOL, jsonObject.getString("Symbol"));
             builder.withValue(StockValuesColumns.DATE, jsonObject.getString("Date"));
             builder.withValue(StockValuesColumns.CREATED, Utils.getDate(NOW));
-            builder.withValue(StockValuesColumns.OPEN, jsonObject.getString("Open"));
             builder.withValue(StockValuesColumns.HIGH, jsonObject.getString("High"));
             builder.withValue(StockValuesColumns.LOW, jsonObject.getString("Low"));
+/*            builder.withValue(StockValuesColumns.OPEN, jsonObject.getString("Open"));
             builder.withValue(StockValuesColumns.CLOSE, jsonObject.getString("Close"));
             builder.withValue(StockValuesColumns.VOLUME, jsonObject.getString("Volume"));
-            builder.withValue(StockValuesColumns.ADG_CLOSE, jsonObject.getString("Adj_Close"));
+            builder.withValue(StockValuesColumns.ADG_CLOSE, jsonObject.getString("Adj_Close"));*/
         } catch (JSONException e) {
             e.printStackTrace();
         }

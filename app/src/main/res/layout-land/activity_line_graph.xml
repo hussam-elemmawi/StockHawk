@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
@@ -8,8 +7,8 @@
     <android.support.v7.widget.GridLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
-        android:padding="16dp"
+        android:layout_weight="4"
+        android:padding="10dp"
         app:columnCount="2"
         app:rowCount="2">
 
@@ -25,8 +24,8 @@
 
         <TextView
             android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/graph_high"
             android:textColor="@color/material_green_A700"/>
 
@@ -34,13 +33,13 @@
             android:layout_height="wrap_content"
             android:text="@string/graph_low"
             android:textColor="@color/material_red_A700"/>
-
     </android.support.v7.widget.GridLayout>
 
     <include
         layout="@layout/extra_details"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"/>
+        android:layout_weight="2"
+        />
 
 </LinearLayout>
