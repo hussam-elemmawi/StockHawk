@@ -1,12 +1,9 @@
 <resources>
-    <string name="app_name" translatable="false">Stock Hawk</string>
-
     <string name="action_settings" translatable="true">الأعدادات</string>
     <string name="action_change_units" translatable="true">تغيير الوحدات</string>
     <string name="symbol_search" translatable="true">رمز البحث</string>
     <string name="content_test" translatable="true">البحث عن رمز البورصة</string>
     <string name="input_hint" translatable="true">فيس بوك</string>
-    <string name="input_prefill" translatable="false"></string>
     <string name="network_toast">اوباااا! التطبيق دا عاوز انترنت </string>
 
     <!-- strings for graph-->
