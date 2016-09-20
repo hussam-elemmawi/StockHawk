@@ -1,8 +1,10 @@
 package com.sam_chordas.android.stockhawk.service;
 
+import android.app.PendingIntent;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -32,6 +34,9 @@ import okhttp3.Response;
  */
 public class StockTaskService extends GcmTaskService {
     private String LOG_TAG = StockTaskService.class.getSimpleName();
+
+    public static final String ACTION_DATA_UPDATE =
+            "com.sam_chordas.android.stockhawk.service.ACTION_DATA_UPDATE";
 
     private OkHttpClient client = new OkHttpClient()
             .newBuilder()
@@ -101,6 +106,11 @@ public class StockTaskService extends GcmTaskService {
                     e.printStackTrace();
                 }
             }
+
+//            Intent broadcastIntent = new Intent(ACTION_DATA_UPDATE)
+//                    .setPackage(getPackageName());
+//            this.sendBroadcast(broadcastIntent);
+
         } else if (params.getTag().equals("add")) {
             isUpdate = false;
             // get symbol from params.getExtra and build query

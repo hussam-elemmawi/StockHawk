@@ -8,6 +8,9 @@
     <string name="input_prefill" translatable="false"></string>
     <string name="network_toast">Uh-oh! This app requires an internet connection</string>
 
+    <!-- strings for widget-->
+    <string name="empty_data" translatable="true">No stocks available!</string>
+
     <!-- strings for graph-->
     <string name="graph_high" translatable="true">High</string>
     <string name="graph_low" translatable="true">Low</string>

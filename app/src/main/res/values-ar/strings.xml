@@ -6,6 +6,9 @@
     <string name="input_hint" translatable="true">فيس بوك</string>
     <string name="network_toast">اوباااا! التطبيق دا عاوز انترنت </string>
 
+    <!-- strings for widget-->
+    <string name="empty_data" translatable="true">لا توجد بورصة!</string>
+
     <!-- strings for graph-->
     <string name="graph_high" translatable="true">عالي</string>
     <string name="graph_low" translatable="true">منخفض</string>
