@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,14 +14,12 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.sam_chordas.android.stockhawk.R;
+import com.sam_chordas.android.stockhawk.service.StockTaskService;
 
 /**
  * Created by hussamelemmawi on 20/09/16.
  */
 public class StockHawkWidgetProvider extends AppWidgetProvider {
-
-    public static final String TOAST_ACTION = "com.example.android.stackwidget.TOAST_ACTION";
-    public static final String EXTRA_ITEM = "com.example.android.stackwidget.EXTRA_ITEM";
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -49,18 +48,6 @@ public class StockHawkWidgetProvider extends AppWidgetProvider {
             // of the collection view.
             views.setEmptyView(R.id.list_view_widget, R.id.empty_view);
 
-            // Here we setup the a pending intent template. Individuals items of a collection
-            // cannot setup their own pending intents, instead, the collection as a whole can
-            // setup a pending intent template, and the individual items can set a fillInIntent
-            // to create unique before on an item to item basis.
-            Intent toastIntent = new Intent(context, StockHawkWidgetProvider.class);
-            toastIntent.setAction(StockHawkWidgetProvider.TOAST_ACTION);
-            toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
-            intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-            PendingIntent toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            views.setPendingIntentTemplate(R.id.list_view_widget, toastPendingIntent);
-
             appWidgetManager.updateAppWidget(appWidgetIds[i], views);
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
@@ -68,14 +55,14 @@ public class StockHawkWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        AppWidgetManager mgr = AppWidgetManager.getInstance(context);
-        if (intent.getAction().equals(TOAST_ACTION)) {
-            int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID);
-        }
         super.onReceive(context, intent);
+        if (StockTaskService.ACTION_DATA_UPDATE.equals(intent.getAction())){
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+                    new ComponentName(context, getClass()));
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_widget);
+        }
     }
-
 
     /**
      * Sets the remote adapter used to fill in the list items

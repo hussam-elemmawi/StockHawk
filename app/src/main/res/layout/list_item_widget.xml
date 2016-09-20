@@ -13,6 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="start|center_vertical"
+        android:textColor="@color/detail_accent_pane_background"
         tools:text="GOOG"
         />
 
@@ -27,6 +28,7 @@
             style="@style/BidPriceTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/detail_accent_pane_background"
             android:paddingRight="10sp"
             tools:text="1000.00"/>
 

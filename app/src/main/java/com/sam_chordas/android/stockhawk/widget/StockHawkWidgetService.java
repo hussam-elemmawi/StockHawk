@@ -60,9 +60,9 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
 
     @Override
     public void onDataSetChanged() {
-        if (mData != null){
-            mData.close();
-        }
+//        if (mData != null){
+//            mData.close();
+//        }
 
         // Retrieve data from db
         final long identityToken = Binder.clearCallingIdentity();
@@ -73,13 +73,6 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
                 new String[]{"1"},
                 null);
         Binder.restoreCallingIdentity(identityToken);
-
-        if (mData != null && mData.getCount() > 0){
-            mData.moveToFirst();
-            do {
-
-            }while (mData.moveToNext());
-        }
     }
 
     @Override
@@ -126,15 +119,6 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
             remoteViews.setTextColor(R.id.change,
                     context.getResources().getColor(R.color.material_orange_A700));
         }
-
-        // Next, we set a fill-intent which will be used to fill-in the pending intent template
-        // which is set on the collection view in StackWidgetProvider.
-        Bundle extras = new Bundle();
-        extras.putInt(StockHawkWidgetProvider.EXTRA_ITEM, position);
-        Intent fillInIntent = new Intent();
-        fillInIntent.putExtras(extras);
-        remoteViews.setOnClickFillInIntent(R.id.stock_symbol, fillInIntent);
-
         return remoteViews;
     }
 

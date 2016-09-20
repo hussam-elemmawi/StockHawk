@@ -162,7 +162,7 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
 
         anim = new Animation();
         anim.setAlpha(150)
-            .setDuration(1000);
+            .setDuration(800);
     }
 
     boolean freshDataStoredInDatabase() {
