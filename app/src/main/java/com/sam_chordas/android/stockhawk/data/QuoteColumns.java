@@ -103,4 +103,8 @@ public class QuoteColumns {
     @DataType(DataType.Type.INTEGER)
     @NotNull
     public static final String ISCURRENT = "is_current";
+    @DataType(DataType.Type.INTEGER)
+    @NotNull
+    public static final String IS_EXIST = "is_exist";
+
 }

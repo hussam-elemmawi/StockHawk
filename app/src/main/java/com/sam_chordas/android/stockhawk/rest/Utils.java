@@ -187,13 +187,19 @@ public class Utils {
                     jsonObject.getString("PercentChangeFromFiftydayMovingAverage"));
             builder.withValue(QuoteColumns.PERCENT_CHANGE_FROM_200_DAY_MOVING_AVG,
                     jsonObject.getString("PercentChangeFromTwoHundreddayMovingAverage"));
-            builder.withValue(QuoteColumns.ISCURRENT, 1);
+
             if (change.charAt(0) == '-') {
                 builder.withValue(QuoteColumns.ISUP, 0);
+                builder.withValue(QuoteColumns.ISCURRENT, 1);
+                builder.withValue(QuoteColumns.IS_EXIST, 1);
             } else if (change.charAt(0) == 'n') {
                 builder.withValue(QuoteColumns.ISUP, -1);
+                builder.withValue(QuoteColumns.ISCURRENT, 1);
+                builder.withValue(QuoteColumns.IS_EXIST, 0);
             } else {
                 builder.withValue(QuoteColumns.ISUP, 1);
+                builder.withValue(QuoteColumns.ISCURRENT, 1);
+                builder.withValue(QuoteColumns.IS_EXIST, 1);
             }
 
         } catch (JSONException e) {

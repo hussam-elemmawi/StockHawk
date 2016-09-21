@@ -67,7 +67,7 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
         mData = mContext.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
                 new String[]{QuoteColumns._ID, QuoteColumns.SYMBOL, QuoteColumns.BIDPRICE,
                         QuoteColumns.PERCENT_CHANGE, QuoteColumns.ISUP},
-                QuoteColumns.ISCURRENT + " = ?",
+                QuoteColumns.IS_EXIST + " = ?",
                 new String[]{"1"},
                 null);
         Binder.restoreCallingIdentity(identityToken);
