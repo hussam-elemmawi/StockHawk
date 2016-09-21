@@ -2,6 +2,7 @@ package com.sam_chordas.android.stockhawk.widget;
 
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -11,16 +12,22 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.service.StockTaskService;
+import com.sam_chordas.android.stockhawk.ui.LineGraphActivity;
+import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
 
 /**
  * Created by hussamelemmawi on 20/09/16.
  */
 public class StockHawkWidgetProvider extends AppWidgetProvider {
 
+    public static final String INDIVIDUAL_ACTION
+            = "com.sam_chordas.android.stockhawk.widget.INDIVIDUAL_ACTION";
+    public static final String EXTRA_ITEM = "com.sam_chordas.android.stockhawk.widget.EXTRA_ITEM";
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // update each of the widgets with the remote adapter
@@ -42,11 +49,23 @@ public class StockHawkWidgetProvider extends AppWidgetProvider {
                 setRemoteAdapterV11(context, views);
             }
 
-            views.setRemoteAdapter(appWidgetIds[i], R.id.list_view_widget, intent);
+            views.setRemoteAdapter(appWidgetIds[i], R.id.widget_list, intent);
+
+            Intent myStocksActivityIntent = new Intent(context, MyStocksActivity.class);
+            PendingIntent myStocksActivityPendingIntent = PendingIntent.getActivity(context, 0,
+                    myStocksActivityIntent, 0);
+
+            views.setOnClickPendingIntent(R.id.widget_header, myStocksActivityPendingIntent);
+
+            Intent individualActionIntent = new Intent(context, LineGraphActivity.class);
+            PendingIntent individualActionPendingIntent = TaskStackBuilder.create(context)
+                    .addNextIntentWithParentStack(individualActionIntent)
+                    .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setPendingIntentTemplate(R.id.widget_list, individualActionPendingIntent);
 
             // The empty view is displayed when the collection has no items. It should be a sibling
             // of the collection view.
-            views.setEmptyView(R.id.list_view_widget, R.id.empty_view);
+            views.setEmptyView(R.id.widget_list, R.id.empty_view);
 
             appWidgetManager.updateAppWidget(appWidgetIds[i], views);
         }
@@ -60,7 +79,7 @@ public class StockHawkWidgetProvider extends AppWidgetProvider {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                     new ComponentName(context, getClass()));
-            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_widget);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
         }
     }
 
@@ -71,7 +90,7 @@ public class StockHawkWidgetProvider extends AppWidgetProvider {
      */
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void setRemoteAdapter(Context context, @NonNull final RemoteViews views) {
-        views.setRemoteAdapter(R.id.list_view_widget,
+        views.setRemoteAdapter(R.id.widget_list,
                 new Intent(context, StockHawkWidgetService.class));
     }
 
@@ -82,7 +101,7 @@ public class StockHawkWidgetProvider extends AppWidgetProvider {
      */
     @SuppressWarnings("deprecation")
     private void setRemoteAdapterV11(Context context, @NonNull final RemoteViews views) {
-        views.setRemoteAdapter(0, R.id.list_view_widget,
+        views.setRemoteAdapter(0, R.id.widget_list,
                 new Intent(context, StockHawkWidgetService.class));
     }
 }

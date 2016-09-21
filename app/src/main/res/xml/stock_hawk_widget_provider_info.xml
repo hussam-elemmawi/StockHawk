@@ -6,6 +6,6 @@
     android:resizeMode="horizontal|vertical"
     android:previewImage="@mipmap/ic_launcher"
     android:initialLayout="@layout/widget_initial_layout"
-    android:autoAdvanceViewId="@id/list_view_widget"
+    android:autoAdvanceViewId="@id/widget_list"
     android:updatePeriodMillis="0">
 </appwidget-provider>

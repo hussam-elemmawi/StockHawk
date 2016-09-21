@@ -69,7 +69,7 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
         mData = context.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
                 new String[]{QuoteColumns._ID, QuoteColumns.SYMBOL, QuoteColumns.BIDPRICE,
                         QuoteColumns.PERCENT_CHANGE, QuoteColumns.ISUP},
-                QuoteColumns.ISCURRENT + " = ?",
+                QuoteColumns.ISCURRENT + " = ? AND ",
                 new String[]{"1"},
                 null);
         Binder.restoreCallingIdentity(identityToken);
@@ -119,6 +119,11 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
             remoteViews.setTextColor(R.id.change,
                     context.getResources().getColor(R.color.material_orange_A700));
         }
+
+        final Intent fillinIntent = new Intent();
+        fillinIntent.putExtra("symbol", symbol);
+        remoteViews.setOnClickFillInIntent(R.id.widget_list_item, fillinIntent);
+
         return remoteViews;
     }
 

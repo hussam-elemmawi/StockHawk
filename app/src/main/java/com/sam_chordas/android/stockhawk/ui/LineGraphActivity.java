@@ -1,10 +1,7 @@
 package com.sam_chordas.android.stockhawk.ui;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,20 +13,13 @@ import android.content.Loader;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Fade;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import com.db.chart.Tools;
-import com.db.chart.model.ChartSet;
 import com.db.chart.model.LineSet;
-import com.db.chart.view.AxisController;
 import com.db.chart.view.LineChartView;
 import com.db.chart.view.animation.Animation;
-import com.db.chart.view.animation.easing.BaseEasingMethod;
-import com.db.chart.view.animation.style.BaseStyleAnimation;
-import com.db.chart.view.animation.style.DashAnimation;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
@@ -46,7 +36,6 @@ import butterknife.ButterKnife;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
 
 /**
  * Created by hussamelemmawi on 14/09/16.
@@ -334,6 +323,8 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
                 highs = null;
                 highSet = null;
             }
+        } else {
+            // Add a loading bar
         }
 
         loadExtraDetails();
