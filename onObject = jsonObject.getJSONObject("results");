@@ -1,0 +1,118 @@
+[33mcommit b9c86d30ccac4c8586c2baf02938f04c629bff4c[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Wed Sep 21 15:32:35 2016 +0200
+
+    feat: add listener for widget list item click
+
+[33mcommit 9a91a2b261e700614ac1e20d4ecc12a2695b5b89[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Tue Sep 20 20:18:09 2016 +0200
+
+    fix widget not updating bug, feat add some colors
+
+[33mcommit 87a5548ef4c348d66cdd960a1f4329847adef59b[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Tue Sep 20 18:43:49 2016 +0200
+
+    feat: add a widget to the app
+
+[33mcommit ad0efc149724c6d64b9fab6a44471693f19b273f[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Tue Sep 20 00:04:30 2016 +0200
+
+    fix warning
+
+[33mcommit f132b23a9ff3a1ee96c6b55190412ca37c266ce1[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Mon Sep 19 23:56:01 2016 +0200
+
+    feat: add william charts to plot the graph
+
+[33mcommit 588d76acbeb9dfcda8f74155369dc56d279753d6[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Sun Sep 18 19:15:09 2016 +0200
+
+    feat: coloring, adding launcher icon
+
+[33mcommit 80e2a609ac32425f9046a775ceffb2109269201e[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Sun Sep 18 17:55:11 2016 +0200
+
+    refactor: stock values activity app bar name
+
+[33mcommit b888afa03cbb66d540b774a25ab83cff38e992a5[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Sun Sep 18 17:46:49 2016 +0200
+
+    feat: add extra details to stock values activity and its design
+
+[33mcommit 4e4820fdd73747302b45c52f60ff2bff6153405a[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Sat Sep 17 20:13:20 2016 +0200
+
+    feat new graph library
+
+[33mcommit 8ca2f46edc9178a0379ca1951cc61bdb3b51cf97[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Sat Sep 17 18:31:49 2016 +0200
+
+    first trial
+
+[33mcommit 4d8f97ba3facab236281d17bade79c49beb121ea[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Sat Sep 17 17:00:02 2016 +0200
+
+    Trying another simpler library
+
+[33mcommit 8113f57bd645e93df12ec12ce2a8e2bc9c09af86[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Fri Sep 16 16:21:10 2016 +0200
+
+    feat & fix:
+    	1- feat: check method if there is a fresh stock values, if not fetch from server.
+    	2- fix: non-existing stock bug using bidPrice as check
+
+[33mcommit e26f9924cd3927eb72243bf779d3c1a9aa03f600[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Fri Sep 16 15:21:44 2016 +0200
+
+    feat: StockValueActivity successfully fetch & store stockValues
+
+[33mcommit 5fcad593e312459f9e8accb52e11763fcec41187[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Wed Sep 14 18:38:21 2016 +0200
+
+    fix bug
+
+[33mcommit a78c96cdfd14cd8a013cd563fd672712e0f007c5[m
+Merge: 51ec913 8c04e9d
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Wed Sep 14 18:27:36 2016 +0200
+
+    Merge branch 'master' into HEAD
+
+[33mcommit 51ec91317408ffb65ed069716fdffca7f4f066cd[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Wed Sep 14 18:15:58 2016 +0200
+
+    feat: on recycler item click opens another activity
+
+[33mcommit 8c04e9d140f2da135a86676fa95d8697b204a377[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Wed Sep 14 15:38:36 2016 +0200
+
+    problem, I'm commiting back to node -fix when user search for non-existing stock, the app doesn't crash.-
+
+[33mcommit 931ac82ac5f36c8769d7da18daf163feb5de86a8[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Tue Sep 13 15:59:23 2016 +0200
+
+    feat & refactor:
+    	1- feat: add orange pill for non-existing stocks as an error
+    	2- refactor: add onother columns to db of another details for a given stock
+
+[33mcommit 11cbc936d597ccac7cff4ae45e54466ae6323d94[m
+Author: Hussam Elemmawi <hussam.elemmawi@gmail.com>
+Date:   Tue Sep 13 13:30:00 2016 +0200
+
+    fix: fix when user search for non-existing stock, the app doesn't crash.

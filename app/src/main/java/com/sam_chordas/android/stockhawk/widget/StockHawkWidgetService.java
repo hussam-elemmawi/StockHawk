@@ -5,17 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Binder;
-import android.os.Build;
-import android.os.Bundle;
+import android.os.Looper;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+import android.widget.Toast;
 
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
-
-import java.util.ArrayList;
 
 /**
  * Created by hussamelemmawi on 20/09/16.
@@ -30,7 +28,7 @@ public class StockHawkWidgetService extends RemoteViewsService {
 
 class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFactory {
 
-    private Context context = null;
+    private Context mContext = null;
     private int appWidgetId;
     Cursor mData;
 
@@ -48,7 +46,7 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
 
 
     public StockHawkWidgetListProvider(Context context, Intent intent){
-        this.context = context;
+        this.mContext = context;
         appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
 
@@ -66,10 +64,10 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
 
         // Retrieve data from db
         final long identityToken = Binder.clearCallingIdentity();
-        mData = context.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
+        mData = mContext.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
                 new String[]{QuoteColumns._ID, QuoteColumns.SYMBOL, QuoteColumns.BIDPRICE,
                         QuoteColumns.PERCENT_CHANGE, QuoteColumns.ISUP},
-                QuoteColumns.ISCURRENT + " = ? AND ",
+                QuoteColumns.ISCURRENT + " = ?",
                 new String[]{"1"},
                 null);
         Binder.restoreCallingIdentity(identityToken);
@@ -102,7 +100,7 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
 
         int isUp = mData.getInt(COL_ISUP);
 
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+        RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(),
                 R.layout.list_item_widget);
 
         remoteViews.setTextViewText(R.id.stock_symbol, symbol);
@@ -111,25 +109,27 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
 
         if (isUp == 1){
                 remoteViews.setTextColor(R.id.change,
-                        context.getResources().getColor(R.color.material_green_A700));
+                        mContext.getResources().getColor(R.color.material_green_A700));
         }else if (isUp == 0){
             remoteViews.setTextColor(R.id.change,
-                    context.getResources().getColor(R.color.material_red_A700));
+                    mContext.getResources().getColor(R.color.material_red_A700));
         }else {
             remoteViews.setTextColor(R.id.change,
-                    context.getResources().getColor(R.color.material_orange_A700));
+                    mContext.getResources().getColor(R.color.material_orange_A700));
         }
 
-        final Intent fillinIntent = new Intent();
-        fillinIntent.putExtra("symbol", symbol);
-        remoteViews.setOnClickFillInIntent(R.id.widget_list_item, fillinIntent);
+        if (isUp != -1 && !bidPrice.equals("empty")){
+            final Intent fillinIntent = new Intent();
+            fillinIntent.putExtra("symbol", symbol);
+            remoteViews.setOnClickFillInIntent(R.id.widget_list_item, fillinIntent);
+        }
 
         return remoteViews;
     }
 
     @Override
     public RemoteViews getLoadingView() {
-        return new RemoteViews(context.getPackageName(), R.layout.list_item_widget);
+        return new RemoteViews(mContext.getPackageName(), R.layout.list_item_widget);
     }
 
     @Override
