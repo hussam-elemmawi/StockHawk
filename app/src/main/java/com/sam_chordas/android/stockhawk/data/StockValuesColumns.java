@@ -25,6 +25,7 @@ public class StockValuesColumns {
     @DataType(DataType.Type.TEXT) @NotNull
     public static final String LOW = "low";
 
+    // Extra columns for extra data if I want to add in future
 //    @DataType(DataType.Type.TEXT) @NotNull
 //    public static final String OPEN = "open";
 //    @DataType(DataType.Type.TEXT) @NotNull

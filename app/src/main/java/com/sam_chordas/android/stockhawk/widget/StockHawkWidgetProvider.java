@@ -19,13 +19,9 @@ import com.sam_chordas.android.stockhawk.ui.LineGraphActivity;
 import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
 
 /**
- * Created by hussamelemmawi on 20/09/16.
+ * Created by hussam_elemmawi on 20/09/16.
  */
 public class StockHawkWidgetProvider extends AppWidgetProvider {
-
-    public static final String INDIVIDUAL_ACTION
-            = "com.sam_chordas.android.stockhawk.widget.INDIVIDUAL_ACTION";
-    public static final String EXTRA_ITEM = "com.sam_chordas.android.stockhawk.widget.EXTRA_ITEM";
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -51,12 +47,13 @@ public class StockHawkWidgetProvider extends AppWidgetProvider {
 
             views.setRemoteAdapter(appWidgetIds[i], R.id.widget_list, intent);
 
+            // For the main widget frame clicks, opens the MyStocksActivity
             Intent myStocksActivityIntent = new Intent(context, MyStocksActivity.class);
             PendingIntent myStocksActivityPendingIntent = PendingIntent.getActivity(context, 0,
                     myStocksActivityIntent, 0);
-
             views.setOnClickPendingIntent(R.id.widget_header, myStocksActivityPendingIntent);
 
+            // For the individual view from the stock list clicks
             Intent individualActionIntent = new Intent(context, LineGraphActivity.class);
             PendingIntent individualActionPendingIntent = TaskStackBuilder.create(context)
                     .addNextIntentWithParentStack(individualActionIntent)

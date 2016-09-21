@@ -1,11 +1,7 @@
 package com.sam_chordas.android.stockhawk.service;
 
-import android.app.PendingIntent;
-import android.content.ContentProviderOperation;
-import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -23,7 +19,6 @@ import com.sam_chordas.android.stockhawk.rest.Utils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -33,6 +28,7 @@ import okhttp3.Response;
  * Created by sam_chordas on 9/30/15.
  * The GCMTask service is primarily for periodic tasks. However, OnRunTask can be called directly
  * and is used for the initialization and adding task as well.
+ * Edited by hussam_elemmawi on 20/09/16.
  */
 public class StockTaskService extends GcmTaskService {
     private String LOG_TAG = StockTaskService.class.getSimpleName();
@@ -134,11 +130,13 @@ public class StockTaskService extends GcmTaskService {
                 try {
                     ContentValues contentValues = new ContentValues();
                     // update ISCURRENT to 0 (false) so new data is current
+                    // update IS_EXISTS to 0 so widget pull fresh data too
                     if (isUpdate) {
                         contentValues.put(QuoteColumns.ISCURRENT, 0);
                         contentValues.put(QuoteColumns.IS_EXIST, 0);
                         mContext.getContentResolver().update(QuoteProvider.Quotes.CONTENT_URI, contentValues,
                                 null, null);
+                        // delete old data, preventing DB overgrowth
                         mContext.getContentResolver().delete(QuoteProvider.Quotes.CONTENT_URI,
                                 QuoteColumns.ISCURRENT + " = ?",
                                 new String[]{"0"});

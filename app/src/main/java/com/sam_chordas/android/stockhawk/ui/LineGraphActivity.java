@@ -38,7 +38,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Created by hussamelemmawi on 14/09/16.
+ * Created by hussame_lemmawi on 14/09/16.
  */
 public class LineGraphActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = LineGraphActivity.class.getSimpleName();
@@ -95,25 +95,34 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
 
     LineSet highSet, lowSet;
     float[] highs, lows;
-    String[] xLabels;
+    String[] xAxisLabels;
     String[] mCurrentMonths = new String[13];
 
     int axisColor, highDataColor, lowDataColor;
-
     float maxValue;
+
+    String date;
+    int counter1 = 0;
+    int counter2 = 0;
+    int size;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_line_graph);
 
+        // Set the action bar title for the current selected stock
         mSymbol = getIntent().getStringExtra("symbol");
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(mSymbol + "'Stock Values");
         }
 
+        // Check first if there is a fresh data for this stock.
+        // Preventing unnecessary server queries.
         if (!freshDataStoredInDatabase()) {
+            // If there is no fresh data, delete old data then query for fresh one.
+            // Preventing overgrowth of DB
             deleteOldData();
             new FetchStockValuesTask().execute();
         }
@@ -123,14 +132,12 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
     }
 
     @Override
-    protected void onRestart() {
+    protected void onResume() {
+        super.onResume();
         getLoaderManager().restartLoader(LOADER_ID, null, this);
-        super.onRestart();
     }
 
     void initializeChart() {
-        // TODO : fix and customize graph
-
         if (Build.VERSION.SDK_INT > 23){
             axisColor = ContextCompat.getColor(this, R.color.material_blue_700);
             highDataColor = ContextCompat.getColor(this, R.color.material_green_A700);
@@ -163,7 +170,6 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
         if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             String lastStoredDate = cursor.getString(cursor.getColumnIndex(StockValuesColumns.CREATED));
-            Log.d(LOG_TAG, lastStoredDate + " fasel " + Utils.getDate(CURRENT_YEAR));
             String[] parts = lastStoredDate.split("-");
             int storedYear = Integer.parseInt(parts[0]);
             int storedMonth = Integer.parseInt(parts[1]);
@@ -175,8 +181,11 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
             int currentMonth = Integer.parseInt(parts[1]);
             int currentDay = Integer.parseInt(parts[2]);
 
+            // If it is the same days, Check months!
             if (storedDay == currentDay) {
+                // If it is the same months, Check years!
                 if (storedMonth == currentMonth) {
+                    // If different years, update needed indeed.
                     if (storedYear == currentYear)
                         return true;
                 }
@@ -194,6 +203,7 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
                 new String[]{mSymbol});
     }
 
+    // Private class for fetching stock values over time (1 year from now).
     private class FetchStockValuesTask extends AsyncTask<Void, Void, Void> {
 
         String fetchData(String url) throws IOException {
@@ -207,10 +217,7 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
 
         @Override
         protected Void doInBackground(Void... params) {
-
             StringBuilder urlStringBuilder = new StringBuilder();
-
-            Log.d(LOG_TAG, "ana ha fetch ahoo ...");
 
             try {
                 urlStringBuilder.append("https://query.yahooapis.com/v1/public/yql?q=");
@@ -228,9 +235,6 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
 
                 LineGraphActivity.this.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
                         Utils.stockValuesJsonToContentVals(getResponse));
-
-                Log.d(LOG_TAG, mSymbol + mSymbol + mSymbol);
-
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -252,6 +256,7 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
                 StockValuesColumns.DATE + " ASC");
     }
 
+    // For easy coding rather than switching to many to the DB columns class.
     public static final int COL_DATE = 2;
     public static final int COL_HIGH = 4;
     public static final int COL_LOW = 5;
@@ -261,55 +266,69 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
         if (data != null) {
             data.moveToFirst();
             if (data.getCount() > 0) {
-                String date;
-                int i = 0;
-                int ii = 0;
-                int size = data.getCount() + 1;
+
+                // Initializing this fields
+                date = "";
+                counter1 = 0;
+                counter2 = 0;
+                size = data.getCount() + 1;
                 highs = new float[size];
                 lows = new float[size];
-                xLabels = new String[size];
+                xAxisLabels = new String[size];
+                // Max stock value will be one of the High values for sure.
+                // Initialize Max with first high value
                 maxValue = Float.parseFloat(data.getString(COL_HIGH));
 
+                // Initialize xAxisLabels
                 for (int k = 0; k < size; k++)
-                    xLabels[k] = "";
+                    xAxisLabels[k] = "";
 
                 do {
                     date = data.getString(COL_DATE);
-                    highs[ii] =
+                    highs[counter2] =
                             Float.parseFloat(data.getString(COL_HIGH));
-                    lows[ii] =
+                    lows[counter2] =
                             Float.parseFloat(data.getString(COL_LOW));
-                    ii++;
+                    counter2++;
 
-                    if (maxValue < highs[ii])
-                        maxValue = highs[ii];
+                    if (maxValue < highs[counter2])
+                        maxValue = highs[counter2];
 
-                    if (i == 0) {
-                        mCurrentMonths[i] = Utils.formateXLabels(date);
-                        i++;
-                    } else if (!mCurrentMonths[i - 1].equals(Utils.formateXLabels(date))) {
-                        mCurrentMonths[i] = Utils.formateXLabels(date);
-                        i++;
+                    if (counter1 == 0) {
+                        // Add current months (i.e from now to the same month last year)
+                        // with no duplicate, duplicates exists as stock values assigned with days.
+                        mCurrentMonths[counter1] = Utils.formateXLabels(date);
+                        counter1++;
+                    } else if (!mCurrentMonths[counter1 - 1].equals(Utils.formateXLabels(date))) {
+                        // If month already stored, skip it
+                        mCurrentMonths[counter1] = Utils.formateXLabels(date);
+                        counter1++;
                     }
-
-
                 } while (data.moveToNext());
 
-                i = 0;
+                // just reuse counter1 rather than adding another object
+                counter1 = 0;
+                // Divide the stock values size by 7
+                // which 7 = 12month/2everyTwomonths + 1
+                // ex: sep16, jul16, may16, march16, jan16, nov15, sep15
+                //     09-16, 07-16, 05-16, 03-16,   01-16, 11-15, 09-15
+                //         9,    7,      5,     3,       1,    11,     9
                 for (int j = 13; j < size; j += (size / 7)) {
-                    xLabels[j] = mCurrentMonths[i];
-                    i+=2;
-                    i %= 13;
+                    xAxisLabels[j] = mCurrentMonths[counter1];
+                    counter1+=2;
+                    counter1 %= 13;
                 }
 
-                highSet = new LineSet(xLabels, highs);
+                highSet = new LineSet(xAxisLabels, highs);
                 highSet.setColor(highDataColor);
                 highSet.setThickness(Tools.fromDpToPx(1));
+                // Since last value cause a line drawing from the Y to X
                 highSet.endAt(size-1);
 
-                lowSet = new LineSet(xLabels, lows);
+                lowSet = new LineSet(xAxisLabels, lows);
                 lowSet.setColor(lowDataColor);
                 lowSet.setThickness(Tools.fromDpToPx(1));
+                // Since last value cause a line drawing from the Y to X
                 lowSet.endAt(size-1);
 
                 mLineChart.addData(highSet);
@@ -318,18 +337,18 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
                 mLineChart.setStep((int) Utils.getProperSteps(maxValue));
                 mLineChart.show(anim);
 
+                // Emptying fields to be reused
                 lows = null;
                 lowSet = null;
                 highs = null;
                 highSet = null;
             }
-        } else {
-            // Add a loading bar
         }
-
+        // Load other data into detailed views
         loadExtraDetails();
     }
 
+    // Easing coding rather than to many switching to DB columns class.
     public static final int COL_CURRENCY = 4;
     public static final int COL_ESPE_CURRENT_YEAR = 5;
     public static final int COL_ESPE_CURRENT_YEAR_PRICE = 6;

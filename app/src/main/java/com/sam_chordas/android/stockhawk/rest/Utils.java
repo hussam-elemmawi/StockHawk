@@ -31,6 +31,9 @@ public class Utils {
                                         "Oct", "Nov", "Dec"};
     public static final int NOW = 0;
 
+    /*
+    * Helper method to get proper steps from max stock values to plot its graph
+    * */
     public static float getProperSteps(float maxValue){
         if (maxValue > 0 && maxValue < 10){
             return 1;
@@ -44,6 +47,10 @@ public class Utils {
             return -1;
     }
 
+    /**
+     * Helper method returns date based on years as a parameter
+     * @return : this years date
+     * */
     public static String getDate(int afterYears){
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -51,6 +58,10 @@ public class Utils {
         return df.format(calendar.getTime());
     }
 
+    /**
+    * Helper method to return date in proper way for x-axis labels
+    * @return : date in format like Sep16
+    * */
     public static String formateXLabels(String date){
         String[] parts = date.split("-");
         return MONTHS[Integer.parseInt(parts[1]) -1] + parts[0].substring(2, 4);
@@ -189,10 +200,12 @@ public class Utils {
                     jsonObject.getString("PercentChangeFromTwoHundreddayMovingAverage"));
 
             if (change.charAt(0) == '-') {
+                // if change == -ve value
                 builder.withValue(QuoteColumns.ISUP, 0);
                 builder.withValue(QuoteColumns.ISCURRENT, 1);
                 builder.withValue(QuoteColumns.IS_EXIST, 1);
             } else if (change.charAt(0) == 'n') {
+                // if change == "null"
                 builder.withValue(QuoteColumns.ISUP, -1);
                 builder.withValue(QuoteColumns.ISCURRENT, 1);
                 builder.withValue(QuoteColumns.IS_EXIST, 0);
@@ -217,7 +230,9 @@ public class Utils {
             builder.withValue(StockValuesColumns.CREATED, Utils.getDate(NOW));
             builder.withValue(StockValuesColumns.HIGH, jsonObject.getString("High"));
             builder.withValue(StockValuesColumns.LOW, jsonObject.getString("Low"));
-/*            builder.withValue(StockValuesColumns.OPEN, jsonObject.getString("Open"));
+
+            // for extra data if I want to add in future
+/*          builder.withValue(StockValuesColumns.OPEN, jsonObject.getString("Open"));
             builder.withValue(StockValuesColumns.CLOSE, jsonObject.getString("Close"));
             builder.withValue(StockValuesColumns.VOLUME, jsonObject.getString("Volume"));
             builder.withValue(StockValuesColumns.ADG_CLOSE, jsonObject.getString("Adj_Close"));*/

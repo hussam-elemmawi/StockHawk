@@ -38,13 +38,6 @@ import com.sam_chordas.android.stockhawk.touch_helper.SimpleItemTouchHelperCallb
 
 public class MyStocksActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
-
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
     private CharSequence mTitle;
     private Intent mServiceIntent;
     private ItemTouchHelper mItemTouchHelper;
@@ -86,19 +79,22 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 new RecyclerViewItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View v, int position) {
-                        //TODO:
-                        // do something on item click
+
                         Intent intent = new Intent(MyStocksActivity.this, LineGraphActivity.class);
 
+                        // Cursor to get the clicked stock data from database
                         Cursor cursor = mCursorAdapter.getCursor();
                         cursor.moveToPosition(position);
                         int isUp = cursor.getInt(cursor.getColumnIndex(QuoteColumns.ISUP));
                         String bidPrice = cursor.getString(cursor.getColumnIndex(QuoteColumns.BIDPRICE));
+
+                        // If this stock is existing, start the LineGraphActivity
                         if (isUp != -1 && !bidPrice.equals("empty")){
                             String symbol = cursor.getString(1);
                             intent.putExtra("symbol", symbol);
                             startActivity(intent);
                         }else {
+                            // Else, toast non-existing stock
                             Toast.makeText(MyStocksActivity.this,
                                     getString(R.string.stock_doesnt_exists),
                                     Toast.LENGTH_LONG).show();
@@ -106,7 +102,6 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                     }
                 }));
         recyclerView.setAdapter(mCursorAdapter);
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.attachToRecyclerView(recyclerView);
@@ -237,6 +232,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mCursorAdapter.swapCursor(data);
         mCursor = data;
 
+        // Send a Broadcast for widget to update.
         Intent broadcastIntent = new Intent(StockTaskService.ACTION_DATA_UPDATE)
                 .setPackage(mContext.getPackageName());
         mContext.sendBroadcast(broadcastIntent);

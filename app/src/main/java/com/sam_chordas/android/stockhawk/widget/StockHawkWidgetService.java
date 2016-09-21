@@ -16,7 +16,7 @@ import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 
 /**
- * Created by hussamelemmawi on 20/09/16.
+ * Created by hussam_elemmawi on 20/09/16.
  */
 public class StockHawkWidgetService extends RemoteViewsService {
 
@@ -44,8 +44,7 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
     private static final int COL_PERCENT_CHANGE = 3;
     private static final int COL_ISUP = 4;
 
-
-    public StockHawkWidgetListProvider(Context context, Intent intent){
+    public StockHawkWidgetListProvider(Context context, Intent intent) {
         this.mContext = context;
         appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -58,10 +57,6 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
 
     @Override
     public void onDataSetChanged() {
-//        if (mData != null){
-//            mData.close();
-//        }
-
         // Retrieve data from db
         final long identityToken = Binder.clearCallingIdentity();
         mData = mContext.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
@@ -75,7 +70,7 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
 
     @Override
     public void onDestroy() {
-        if (mData != null){
+        if (mData != null) {
             mData.close();
             mData = null;
         }
@@ -90,7 +85,7 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
     public RemoteViews getViewAt(int position) {
 
         if (position == AdapterView.INVALID_POSITION || mData == null ||
-                ! mData.moveToPosition(position)){
+                !mData.moveToPosition(position)) {
             return null;
         }
 
@@ -107,22 +102,19 @@ class StockHawkWidgetListProvider implements RemoteViewsService.RemoteViewsFacto
         remoteViews.setTextViewText(R.id.bid_price, bidPrice);
         remoteViews.setTextViewText(R.id.change, percentChange);
 
-        if (isUp == 1){
-                remoteViews.setTextColor(R.id.change,
-                        mContext.getResources().getColor(R.color.material_green_A700));
-        }else if (isUp == 0){
+        if (isUp == 1) {
+            remoteViews.setTextColor(R.id.change,
+                    mContext.getResources().getColor(R.color.material_green_A700));
+        } else if (isUp == 0) {
             remoteViews.setTextColor(R.id.change,
                     mContext.getResources().getColor(R.color.material_red_A700));
-        }else {
-            remoteViews.setTextColor(R.id.change,
-                    mContext.getResources().getColor(R.color.material_orange_A700));
         }
 
-        if (isUp != -1 && !bidPrice.equals("empty")){
-            final Intent fillinIntent = new Intent();
-            fillinIntent.putExtra("symbol", symbol);
-            remoteViews.setOnClickFillInIntent(R.id.widget_list_item, fillinIntent);
-        }
+        // Send the symbol into the pending template intent
+        // to plot the correct stock values
+        final Intent fillinIntent = new Intent();
+        fillinIntent.putExtra("symbol", symbol);
+        remoteViews.setOnClickFillInIntent(R.id.widget_list_item, fillinIntent);
 
         return remoteViews;
     }
